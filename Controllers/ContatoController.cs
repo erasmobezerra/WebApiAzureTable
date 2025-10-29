@@ -55,5 +55,13 @@ namespace WebApiAzureTable.Controllers
             tableClient.UpsertEntity(contatoTable);
             return Ok();
         }
+
+        [HttpGet("Listar")]
+        public IActionResult ObterTodos()
+        {
+            var tableClient = GetTableClient();
+            var contatos = tableClient.Query<Contato>().ToList();
+            return Ok(contatos);
+        }
     }
 }
