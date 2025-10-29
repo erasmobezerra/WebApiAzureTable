@@ -41,5 +41,19 @@ namespace WebApiAzureTable.Controllers
             tableClient.UpsertEntity(contato);
             return Ok(contato);
         }
+
+        [HttpPut("{id}")]
+        public IActionResult Atualizar(string id, Contato contato)
+        {
+            var tableClient = GetTableClient();
+            var contatoTable = tableClient.GetEntity<Contato>(id, id).Value;
+
+            contatoTable.Nome = contato.Nome;
+            contatoTable.Email = contato.Email;
+            contatoTable.Telefone = contato.Telefone;
+
+            tableClient.UpsertEntity(contatoTable);
+            return Ok();
+        }
     }
 }
