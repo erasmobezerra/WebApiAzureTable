@@ -63,5 +63,15 @@ namespace WebApiAzureTable.Controllers
             var contatos = tableClient.Query<Contato>().ToList();
             return Ok(contatos);
         }
+
+        [HttpGet("ObterPorNome/{nome}")]
+        public IActionResult ObterPorNome(string nome)
+        {
+            var tableClient = GetTableClient();
+            var contatos = tableClient.Query<Contato>(model => model.Nome == nome).ToList();
+            return Ok(contatos);
+        }
+
+
     }
 }
