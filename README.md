@@ -1,6 +1,6 @@
 # 🚀 WebApiAzureTable
 
-Projeto de exemplo em ASP.NET Core que demonstra o uso do Azure Table Storage para persistência de contatos.
+Projeto desenvolvido no curso "Armazenamento de Dados na Azure" com ASP.NET Core que demonstra o uso do Azure Table Storage para persistência de contatos.
 
 ## 🎯 Objetivo
 
@@ -25,30 +25,96 @@ Este projeto implementa uma Web API simples para gerenciar contatos (`Contato`) 
 - .NET 9 SDK instalado
 - Conta Azure com Storage Account (ou Azurite para desenvolvimento local)
 
-## ☁️ Como criar a instância necessária no Azure
+## ☁️ Como criar uma Azure Table Storage
 
-- Acesse o recurso Storage Account -> "Chaves de acesso" -> copie a connection string.
+- Crie uma Conta de Armazenamento no portal do Azure.
+- Acesse o recurso Conta de Armazenamento
 - Em "Tables" (ou usando Storage Explorer) crie a tabela `Contatos`.
+-> Em "Chaves de acesso" -> copie a string de conexão.
 
-## ⚙️ Configuração necessária
+## ▶️ Conecte sua aplicação com sua Conta de Armazenamento
 
-O projeto lê duas chaves em `ConnectionStrings` no `appsettings.json`:
+```powershell
+# No terminal, Clone o repositorio
+git clone https://github.com/erasmobezerra/WebApiAzureTable
 
-- `SAConnectionString` — connection string da Storage Account.
-- `AzureTableName` — nome da tabela a ser usada (ex.: `Contatos`).
+# No terminal, Restaure as dependencias
+cd ./WebApiAzureTable
+dotnet restore
 
-Exemplo mínimo em `appsettings.json`:
+# Configurar `appsettings.Development.json`
+# Na raiz do projeto, edite ou crie um arquivo 'appsettings.Development.# json' e inclua o json abaixo lembrando de incluir a string de conexão da sua conta de armazenamento em {string_de_conexao_conta_de_armazenamento}
 
-```json
 {
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
   "ConnectionStrings": {
-    "SAConnectionString": "<CONNECTION_STRING_AQUI>",
+    "SAConnectionString": "{string_de_conexao_conta_de_armazenamento}",
+    "AzureTableName": "Contatos"
+  }
+}
+
+
+# No terminal, Execute o projeto
+dotnet watch run
+
+# O ambiente de desenvolvimento do Swagger estará disponível em `https://localhost:7295/swagger/index.html`.
+```
+
+
+
+## Usar o Azurite para simular Azure Table Storage
+
+Para evitar custos com recursos do Azure, você pode simular uma conta de armazenamento local com o **Azurite**. Sigo os passos a seguir:
+
+#### 1. Configurar `appsettings.Development.json`
+
+Na raiz do projeto, edite ou crie um arquivo 'appsettings.Development.json' e inclua o json abaixo que contém a string de conexão e o nome do container:
+
+```bash
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "ConnectionStrings": {
+    "SAConnectionString": "UseDevelopmentStorage=true",
     "AzureTableName": "Contatos"
   }
 }
 ```
 
-IMPORTANTE: nunca comite connection strings ou chaves de acesso em repositórios públicos. Use secrets/local user secrets ou variáveis de ambiente em pipelines.
+#### 2. Instalar Azurite
+
+Para evitar custos com recursos do Azure, você pode simular uma conta de armazenamento local com o **Azurite**:
+
+```bash
+npm install -g azurite
+```
+
+#### 3. Executar Azurite
+
+```bash
+azurite
+```
+
+#### 4. Crie o container com o Azure Storage Explorer
+
+Baixe e instale o Azure Storage Explorer. Em Explorer, acesse Conta de Armazenamento > Emulador - Portas Padrão Local > Tabelas e crie em "Criar Tabela" nomeando como : "Contatos".
+
+![alt text](image-1.png)
+
+#### 5. Abra outro terminal no mesmo diretório raiz e execute o projeto
+
+```bash
+dotnet watch run
+```
 
 ## 🔌 Endpoints disponíveis
 
@@ -60,24 +126,7 @@ Base URL: `https://localhost:{port}/api/Contato`
 - GET `/api/Contato/ObterPorNome/{nome}` — Filtrar por nome
 - DELETE `/api/Contato/{id}` — Deletar contato (id = RowKey)
 
-O modelo `Contato` (em `Models/Contato.cs`) contém as propriedades: `Nome`, `Telefone`, `Email`, `PartitionKey`, `RowKey`, `Timestamp`, `ETag`.
-
-Observação: no controller atual, `RowKey` e `PartitionKey` são definidos com um GUID ao criar o contato (cada contato fica em sua própria partição).
-
-## ▶️ Como executar localmente
-
-1) Restaure dependências e rode a aplicação:
-
-```powershell
-git clone https://github.com/erasmobezerra/WebApiAzureTable.git
-cd .\WebApiAzureTable
-dotnet restore
-dotnet run
-```
-
-2) Em ambiente de desenvolvimento o Swagger estará disponível em `/swagger`.
-
-3) Configure `appsettings.json` com a `SAConnectionString` e `AzureTableName` antes de executar, ou use variáveis de ambiente / user secrets.
+![alt text](image.png)
 
 ## 🤝 Como contribuir
 
